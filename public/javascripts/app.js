@@ -5,9 +5,18 @@ var data = [];
 $(function(){
   $.getJSON(jsonUrl[dataId], function(dataString){
     data = JSON.parse(dataString);
+    display(data[0]);
     bubbleChart(data);
   })
 });
+
+function display(d){
+  $('.face img').attr('src', d.image);
+  $('.rank .value').html(d.rank);
+  $('.name').html(d.name);
+  $('.country').html(d.country);
+  $('.networth').html(d.networth);
+}
 
 function bubbleChart(data){
   var r = 1200,
@@ -22,6 +31,13 @@ function bubbleChart(data){
       .attr("width", r)
       .attr("height", r)
       .attr("class", "bubble");
+
+  var tooltip = d3.select("body")
+    .append("div")
+    .style("position", "absolute")
+    .style("z-index", "10")
+    .style("visibility", "hidden")
+    .text("a simple tooltip");
 
   var node = vis.selectAll("g.node")
       .data(data)
@@ -41,4 +57,8 @@ function bubbleChart(data){
       .attr("text-anchor", "middle")
       .attr("dy", ".3em")
       .text(function(d) { return "# " + d.rank; });
+
+  node.on('mouseover', function(d){
+    display(d);
+  });
 }
